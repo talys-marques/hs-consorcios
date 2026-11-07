@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import Simulador from '../components/Simulador.astro';
+import Icon from '../components/Icon.astro';
+import { CONTATO } from '../config.mjs';
+---
+
+<Base titulo="Simulador" descricao="Simule seu consórcio de imóveis, veículos ou investimentos na HS Consórcios: escolha a categoria e o valor do crédito.">
+  <section class="secao secao-cinza">
+    <div class="container simulador-pagina">
+      <div>
+        <h1>Juntos para investir</h1>
+        <p class="simulador-lead">
+          Com suporte estratégico do time HS, você investe hoje nos seus objetivos e constrói um futuro de realizações.
+        </p>
+        <ul class="simulador-vantagens">
+          <li><Icon nome="cifrao" /> Sem juros e sem entrada</li>
+          <li><Icon nome="tesoura" /> Meia parcela até a contemplação</li>
+          <li><Icon nome="cartao" /> Crédito para pessoa física e jurídica</li>
+        </ul>
+        <p>
+          Prefere falar com alguém? Ligue para a Central de Vendas no <a href={`tel:${CONTATO.telefones[1].tel}`}>{CONTATO.telefones[1].numero}</a> ou chame no{' '}
+          <a href={CONTATO.whatsapp} target="_blank" rel="noopener">WhatsApp</a>.
+        </p>
+      </div>
+      <Simulador />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .simulador-pagina {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    align-items: center;
+    gap: 48px;
+  }
+
+  h1 {
+    color: var(--vermelho);
+    font-size: clamp(2rem, 1.6rem + 1.6vw, 2.6rem);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .simulador-lead {
+    font-size: 1.15rem;
+  }
+
+  .simulador-vantagens {
+    display: grid;
+    gap: 10px;
+    margin: 0 0 24px;
+    padding: 0;
+    list-style: none;
+    font-weight: 500;
+  }
+
+  .simulador-vantagens li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .simulador-vantagens :global(.icone) {
+    color: var(--vermelho);
+  }
+
+  .simulador-pagina :global(.simulador) {
+    max-width: none;
+  }
+
+  @media (max-width: 860px) {
+    .simulador-pagina {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

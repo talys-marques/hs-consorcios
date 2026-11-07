@@ -1,0 +1,274 @@
+---
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+import EnvioPrevia from '../components/EnvioPrevia.astro';
+import Icon from '../components/Icon.astro';
+import { DOCUMENTOS } from '../config.mjs';
+import { url } from '../lib/site.mjs';
+
+// Address as published on the WordPress page (without the "s" of the site's domain)
+const EMAIL_LGPD = 'lgpd@hsconsorcio.com.br';
+
+const DIREITOS = [
+  'Acesso às informações sobre o tratamento de seus dados, que deverão ser disponibilizadas de forma clara, adequada e ostensiva;',
+  'Confirmação da existência de tratamento;',
+  'Acesso aos dados;',
+  'Correção de dados incompletos, inexatos ou desatualizados;',
+  'Anonimização, bloqueio ou eliminação de dados desnecessários, excessivos ou tratados em desconformidade com o disposto na LGPD;',
+  'Portabilidade dos dados a outro fornecedor de serviço ou produto, mediante requisição expressa, de acordo com a regulamentação da autoridade nacional, observados os segredos comercial e industrial;',
+  'Eliminação dos dados pessoais tratados com o consentimento do titular, exceto nas hipóteses previstas no art. 16 da LGPD;',
+  'Informação das entidades públicas e privadas com as quais o controlador realizou uso compartilhado de dados;',
+  'Informação sobre a possibilidade de não fornecer consentimento e sobre as consequências da negativa;',
+  'Revogação do consentimento, mediante manifestação expressa do titular, por procedimento gratuito e facilitado;',
+  'Oposição a tratamento realizado com fundamento em uma das hipóteses de dispensa de consentimento, em caso de descumprimento ao disposto na LGPD;',
+  'Solicitação de revisão de decisões e informações sobre decisões tomadas unicamente com base em tratamento automatizado de dados pessoais que afetem seus interesses como titular de dados, respeitados os segredos comercial e industrial da HS Consórcios.',
+];
+
+const AVISO = 'Prévia: a solicitação não foi enviada. Este formulário precisa de um backend antes de ir ao ar.';
+---
+
+<Base titulo="LGPD" descricao="Lei Geral de Proteção de Dados na HS Consórcios: seus direitos como titular de dados pessoais e como exercê-los.">
+  <CabecalhoPagina
+    titulo="Lei Geral de Proteção de Dados"
+    rotulo="LGPD"
+    texto="Consulta facilitada e gratuita sobre o tratamento dos seus dados pessoais, com agilidade e segurança."
+  />
+
+  <section class="secao">
+    <div class="container lgpd">
+      <article class="lgpd-texto">
+        <h2>Lei Geral de Proteção de Dados, o que é?</h2>
+        <p>
+          A Lei Geral de Proteção de Dados – LGPD (Lei nº 13.709/2018) garante que você, titular de dados pessoais, tenha consulta facilitada e gratuita sobre o
+          tratamento de seus dados pessoais, em atenção aos princípios do livre acesso e da transparência.
+        </p>
+        <p>A HS Consórcios está continuamente se empenhando para que você possa exercer seus direitos com agilidade e segurança.</p>
+
+        <h2>O que são dados pessoais?</h2>
+        <p>
+          São informações relativas a uma pessoa identificada ou identificável. Também constituem dados pessoais o conjunto de informações que podem levar à
+          identificação de uma pessoa, por exemplo: nome, RG, CPF, telefone, e-mail etc.
+        </p>
+
+        <h2>Quais são os meus direitos como titular dos dados?</h2>
+        <p>A LGPD prevê uma ampla gama de direitos dos titulares de dados. Veja abaixo quais são eles:</p>
+        <ul class="direitos">
+          {
+            DIREITOS.map((d) => (
+              <li>
+                <Icon nome="check" tamanho={16} />
+                <span>{d}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </article>
+
+      <aside class="lgpd-lateral">
+        <div class="cartao lgpd-contato">
+          <h2>Como exercer os meus direitos?</h2>
+          <p>
+            Use os formulários abaixo. Caso você tenha dúvidas acerca do tratamento dos seus dados pessoais e as opções disponíveis não lhe atendam, entre em
+            contato pelo e-mail:
+          </p>
+          <a href={`mailto:${EMAIL_LGPD}`} class="lgpd-email"><Icon nome="email" tamanho={18} /> {EMAIL_LGPD}</a>
+        </div>
+        <ul class="documentos documentos-coluna">
+          <li>
+            <a href={url(DOCUMENTOS.avisoPrivacidade)} target="_blank" rel="noopener" class="documento">
+              <span class="documento-icone"><Icon nome="documento" tamanho={22} /></span>
+              <span><strong>Aviso de Privacidade</strong><small>PDF</small></span>
+              <Icon nome="baixar" tamanho={18} class="documento-baixar" />
+            </a>
+          </li>
+          <li>
+            <a href={url(DOCUMENTOS.politicaCookies)} target="_blank" rel="noopener" class="documento">
+              <span class="documento-icone"><Icon nome="documento" tamanho={22} /></span>
+              <span><strong>Política de Cookies</strong><small>PDF</small></span>
+              <Icon nome="baixar" tamanho={18} class="documento-baixar" />
+            </a>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="secao secao-cinza">
+    <div class="container formularios-lgpd">
+      <form class="formulario cartao" data-previa>
+        <div class="campo-inteiro">
+          <span class="rotulo">Formulário</span>
+          <h2>Exercer um direito</h2>
+        </div>
+        <fieldset>
+          <legend>Qual direito você deseja exercer? *</legend>
+          <div class="opcoes opcoes-coluna">
+            <label><input type="radio" name="direito" value="saber" required /> Quero saber quais dados pessoais são tratados pela empresa</label>
+            <label><input type="radio" name="direito" value="corrigir" /> Corrigir meus dados</label>
+            <label><input type="radio" name="direito" value="excluir" /> Quero que vocês excluam meus dados</label>
+          </div>
+        </fieldset>
+        <label class="campo">CPF * <input type="text" name="cpf" inputmode="numeric" required /></label>
+        <label class="campo">Nome completo * <input type="text" name="nome" autocomplete="name" required /></label>
+        <fieldset>
+          <legend>Conquistou o nome social ou mudou de sobrenome por qualquer motivo? *</legend>
+          <div class="opcoes">
+            <label><input type="radio" name="nome-social" value="sim" required /> Sim</label>
+            <label><input type="radio" name="nome-social" value="nao" /> Não</label>
+          </div>
+        </fieldset>
+        <label class="campo">Telefone * <input type="tel" name="telefone" autocomplete="tel" required /></label>
+        <label class="campo">E-mail * <input type="email" name="email" autocomplete="email" required /></label>
+        <label class="campo campo-inteiro">Descrição detalhada <span class="opcional">(opcional)</span><textarea name="descricao"></textarea></label>
+        <p class="aviso" role="status" hidden>{AVISO}</p>
+        <div class="formulario-acoes">
+          <button type="submit" class="botao">Enviar solicitação <Icon nome="seta" tamanho={18} /></button>
+        </div>
+      </form>
+
+      <form class="formulario cartao" data-previa>
+        <div class="campo-inteiro">
+          <span class="rotulo">Formulário</span>
+          <h2>Denunciar tratamento irregular de dados</h2>
+        </div>
+        <label class="campo">CPF * <input type="text" name="cpf" inputmode="numeric" required /></label>
+        <label class="campo">Nome * <input type="text" name="nome" autocomplete="name" required /></label>
+        <label class="campo">E-mail * <input type="email" name="email" autocomplete="email" required /></label>
+        <label class="campo">Telefone * <input type="tel" name="telefone" autocomplete="tel" required /></label>
+        <label class="campo campo-inteiro">Descrição detalhada * <textarea name="descricao" required></textarea></label>
+        <p class="aviso" role="status" hidden>{AVISO}</p>
+        <div class="formulario-acoes">
+          <button type="submit" class="botao">Enviar denúncia <Icon nome="seta" tamanho={18} /></button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <EnvioPrevia />
+</Base>
+
+<style>
+  .lgpd {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    align-items: start;
+    gap: 48px 64px;
+  }
+
+  .lgpd-texto h2 {
+    margin-top: 1.4em;
+    font-size: 1.5rem;
+  }
+
+  .lgpd-texto h2:first-child {
+    margin-top: 0;
+  }
+
+  .lgpd-texto p {
+    color: var(--suave);
+  }
+
+  .direitos {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .direitos li {
+    display: flex;
+    gap: 12px;
+    color: var(--texto);
+    font-size: 15px;
+  }
+
+  .direitos :global(.icone) {
+    flex: none;
+    margin-top: 4px;
+    padding: 2px;
+    border-radius: 50%;
+    background: var(--vermelho);
+    color: var(--branco);
+    box-sizing: content-box;
+  }
+
+  .lgpd-lateral {
+    position: sticky;
+    top: calc(var(--topo-altura) + 56px);
+    display: grid;
+    gap: 16px;
+  }
+
+  .lgpd-contato {
+    padding: 28px;
+    border-top: 4px solid var(--vermelho);
+  }
+
+  .lgpd-contato h2 {
+    font-size: 1.3rem;
+  }
+
+  .lgpd-contato p {
+    color: var(--suave);
+    font-size: 15px;
+  }
+
+  .lgpd-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    word-break: break-all;
+  }
+
+  .documentos-coluna {
+    grid-template-columns: 1fr;
+  }
+
+  .formularios-lgpd {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 24px;
+  }
+
+  .formularios-lgpd form {
+    padding: 32px;
+  }
+
+  .formularios-lgpd h2 {
+    margin: 0;
+    font-size: 1.4rem;
+  }
+
+  .formularios-lgpd .rotulo {
+    margin-bottom: 6px;
+  }
+
+  .opcoes-coluna {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .opcoes-coluna label {
+    border-radius: var(--raio);
+  }
+
+  @media (max-width: 960px) {
+    .lgpd,
+    .formularios-lgpd {
+      grid-template-columns: 1fr;
+    }
+
+    .lgpd-lateral {
+      position: static;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .formularios-lgpd form {
+      padding: 24px;
+    }
+  }
+</style>

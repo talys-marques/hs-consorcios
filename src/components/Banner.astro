@@ -1,0 +1,50 @@
+---
+// 1920 × 640 banner with its 1170 × 640 mobile version (`<nome>-mobile` in src/assets/img/, when it exists).
+// Astro's <Picture> has no art direction, so the mobile <source> is built with getImage.
+import { getImage } from 'astro:assets';
+import { imagem } from '../lib/imagens.mjs';
+
+interface Props {
+  nome: string;
+  alt: string;
+  prioridade?: boolean;
+}
+
+const { nome, alt, prioridade = false } = Astro.props;
+
+const existe = (n) => {
+  try {
+    return imagem(n);
+  } catch {
+    return null;
+  }
+};
+
+const desktop = imagem(nome);
+const mobile = existe(`${nome}-mobile`);
+const formato = (src, larguras) => getImage({ src, widths: larguras, format: 'webp' });
+
+const grande = await formato(desktop, [960, 1440, 1920]);
+const pequena = mobile && (await formato(mobile, [585, 1170]));
+---
+
+<picture class="banner">
+  {pequena && <source media="(max-width: 767px)" srcset={pequena.srcSet.attribute} sizes="100vw" width="1170" height="640" />}
+  <source srcset={grande.srcSet.attribute} sizes="100vw" />
+  <img
+    src={grande.src}
+    alt={alt}
+    width="1920"
+    height="640"
+    loading={prioridade ? 'eager' : 'lazy'}
+    fetchpriority={prioridade ? 'high' : undefined}
+    decoding="async"
+  />
+</picture>
+
+<style>
+  .banner img {
+    width: 100%;
+    height: auto;
+  }
+</style>

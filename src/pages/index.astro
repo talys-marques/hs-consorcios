@@ -1,0 +1,348 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Carrossel from '../components/Carrossel.astro';
+import Videos from '../components/Videos.astro';
+import Faq from '../components/Faq.astro';
+import Icon from '../components/Icon.astro';
+import entendaMais from '../assets/img/entenda-mais.jpg';
+import { NUMEROS, DOCUMENTOS } from '../config.mjs';
+import { url } from '../lib/site.mjs';
+import { imagem } from '../lib/imagens.mjs';
+---
+
+<Base>
+  <h1 class="sr-only">HS Consórcios – consórcio de imóveis, veículos e investimentos</h1>
+
+  <Carrossel />
+
+  <section class="secao secao-cinza">
+    <div class="container">
+      <div class="secao-titulo">
+        <span class="rotulo">Desde 1993</span>
+        <h2>Venha investir na HS Consórcios</h2>
+        <p>
+          Seus projetos são ambiciosos? Então invista com segurança! A HS Consórcios traz credibilidade para os investidores e para quem quer conquistar
+          seus maiores sonhos.
+        </p>
+      </div>
+      <Videos />
+    </div>
+  </section>
+
+  <section class="numeros-faixa">
+    <div class="container">
+      <div class="numeros-cabecalho">
+        <span class="rotulo">Credibilidade</span>
+        <h2>Nossos números</h2>
+      </div>
+      <ul class="numeros">
+        {
+          NUMEROS.map((n) => (
+            <li>
+              <span class="numero-icone">
+                <img src={imagem(n.icone).src} alt="" width="30" height="30" loading="lazy" />
+              </span>
+              {n.valor ? (
+                <p>
+                  <span class="numero-prefixo">{n.prefixo}</span>
+                  <strong class="numero-valor">{n.valor}</strong>
+                  <span class="numero-texto">{n.texto}</span>
+                </p>
+              ) : (
+                <p>
+                  <strong class="numero-destaque">{n.texto}</strong>
+                </p>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="container faq-bloco">
+      <div class="faq-bloco-intro">
+        <span class="rotulo">Tire suas dúvidas</span>
+        <h2>Perguntas frequentes</h2>
+        <p>Carta de crédito, grupo, lance e cota: entenda os termos do consórcio antes de fazer a sua simulação.</p>
+        <a href={url('/simulador/')} class="botao">Simule Agora <Icon nome="seta" tamanho={18} /></a>
+      </div>
+      <div>
+        <Faq />
+      </div>
+    </div>
+  </section>
+
+  <section class="entenda">
+    <Image src={entendaMais} alt="" widths={[768, 1280, 1920]} sizes="100vw" class="entenda-foto" />
+    <div class="container">
+      <a href={url('/entenda-mais-sobre-consorcio/')} class="entenda-cartao">
+        <span class="rotulo">Ainda está com dúvidas?</span>
+        <strong>Entenda + sobre consórcio</strong>
+        <span class="entenda-texto">Como funciona, lances, meia parcela e o regulamento geral.</span>
+        <span class="entenda-link">Saiba mais <Icon nome="seta" tamanho={18} /></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="secao secao-cinza">
+    <div class="container">
+      <div class="atencao cartao">
+        <span class="atencao-icone"><Icon nome="alerta" tamanho={30} /></span>
+        <div>
+          <h2>Atenção!</h2>
+          <p>
+            A HS Consórcios informa em nome da ética e transparência aos seus clientes, que não comercializa cotas contempladas, assim como não garante data
+            de contemplação, sob hipótese alguma.
+          </p>
+          <a href={url(DOCUMENTOS.requisitosCredito)} class="botao botao-contorno" target="_blank" rel="noopener">
+            <Icon nome="documento" tamanho={18} /> Requisitos de liberação do crédito
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Numbers ---------- */
+
+  .numeros-faixa {
+    padding-block: clamp(56px, 7vw, 88px);
+    background:
+      radial-gradient(circle at 85% 0%, rgb(255 255 255 / 0.12), transparent 45%),
+      linear-gradient(135deg, var(--vermelho) 0%, var(--vermelho-escuro) 100%);
+    color: var(--branco);
+  }
+
+  .numeros-cabecalho {
+    margin-bottom: 40px;
+  }
+
+  .numeros-cabecalho .rotulo,
+  .numeros-cabecalho h2 {
+    color: var(--branco);
+  }
+
+  .numeros {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .numeros li {
+    display: grid;
+    align-content: start;
+    gap: 18px;
+    padding: 4px 28px;
+    border-left: 1px solid rgb(255 255 255 / 0.25);
+  }
+
+  .numeros li:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .numero-icone {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.14);
+  }
+
+  .numeros p {
+    display: grid;
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .numero-prefixo {
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  .numero-valor {
+    font-size: clamp(1.9rem, 1.5rem + 1vw, 2.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .numero-texto {
+    margin-top: 4px;
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  .numero-destaque {
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  /* ---------- "Entenda +" ---------- */
+
+  .entenda {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 520px;
+    overflow: hidden;
+  }
+
+  .entenda :global(.entenda-foto) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .entenda::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(90deg, rgb(17 24 39 / 0.55) 0%, rgb(17 24 39 / 0.15) 55%, transparent 100%);
+  }
+
+  .entenda .container {
+    position: relative;
+    z-index: 2;
+  }
+
+  .entenda-cartao {
+    display: grid;
+    gap: 8px;
+    max-width: 420px;
+    padding: 36px 36px 32px;
+    border-radius: var(--raio-grande);
+    background: var(--branco);
+    color: var(--texto);
+    text-decoration: none;
+    box-shadow: var(--sombra);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .entenda-cartao:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 24px 50px rgb(17 24 39 / 0.25);
+  }
+
+  .entenda-cartao .rotulo {
+    margin: 0;
+  }
+
+  .entenda-cartao strong {
+    color: var(--grafite);
+    font-size: clamp(1.6rem, 1.3rem + 1vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  .entenda-texto {
+    color: var(--suave);
+  }
+
+  .entenda-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    color: var(--vermelho);
+    font-weight: 700;
+  }
+
+  .entenda-link :global(.icone) {
+    transition: transform 0.2s;
+  }
+
+  .entenda-cartao:hover .entenda-link :global(.icone) {
+    transform: translateX(4px);
+  }
+
+  /* ---------- Warning ---------- */
+
+  .atencao {
+    display: flex;
+    gap: 28px;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 36px 40px;
+    border-left: 5px solid var(--vermelho);
+  }
+
+  .atencao-icone {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--vermelho-claro);
+    color: var(--vermelho);
+  }
+
+  .atencao h2 {
+    margin-bottom: 0.3em;
+    font-size: 1.6rem;
+  }
+
+  .atencao p {
+    color: var(--suave);
+  }
+
+  @media (max-width: 1000px) {
+    .numeros {
+      grid-template-columns: repeat(3, 1fr);
+      row-gap: 36px;
+    }
+
+    .numeros li:nth-child(4) {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .numeros {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .numeros li,
+    .numeros li:nth-child(4) {
+      padding: 0 0 0 20px;
+      border-left: 1px solid rgb(255 255 255 / 0.25);
+    }
+
+    .numeros li:first-child {
+      grid-column: 1 / -1;
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .numeros li:nth-child(2n) {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .entenda {
+      min-height: 0;
+      padding-block: 160px 32px;
+    }
+
+    .entenda-cartao {
+      padding: 28px 24px;
+    }
+
+    .atencao {
+      flex-direction: column;
+      gap: 16px;
+      padding: 28px 24px;
+    }
+  }
+</style>

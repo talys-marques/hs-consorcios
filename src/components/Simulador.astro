@@ -1,0 +1,360 @@
+---
+// Visual version of the WordPress simulator (a Vue widget that posts to admin-ajax.php and forwards the lead to a broker).
+// The three steps work in the browser, but nothing is sent yet: the form needs a backend before going live.
+import Icon from './Icon.astro';
+import { SIMULADOR } from '../config.mjs';
+
+// Credit values offered by the slider: 10 thousand steps up to 100 thousand, 50 thousand up to 500 thousand, then 100 thousand
+const valores = ({ minimo, maximo }) => {
+  const lista = [];
+  for (let v = minimo; v <= maximo; v += v < 100_000 ? 10_000 : v < 500_000 ? 50_000 : 100_000) lista.push(v);
+  return lista;
+};
+const categorias = SIMULADOR.map((c) => ({ ...c, valores: valores(c) }));
+---
+
+<div class="simulador" data-categorias={JSON.stringify(categorias.map(({ id, valores }) => ({ id, valores })))}>
+  <form class="sim-passo" data-passo="1">
+    <p class="sim-chamada">Qual será a sua próxima conquista?</p>
+    <h2 class="sim-titulo">Simule Agora!</h2>
+
+    <fieldset class="sim-categorias">
+      <legend>Escolha qual opção ideal para você:</legend>
+      {
+        categorias.map((c, i) => (
+          <label>
+            <input type="radio" name="categoria" value={c.id} checked={i === 0} />
+            <span class="sim-categoria-icone">
+              <Icon nome={c.icone} tamanho={28} />
+            </span>
+            {c.titulo}
+          </label>
+        ))
+      }
+    </fieldset>
+
+    <fieldset class="sim-modo">
+      <legend class="sr-only">Modalidade</legend>
+      <label><input type="radio" name="modo" value="credito" checked /> Crédito</label>
+      <label><input type="radio" name="modo" value="meia-parcela" /> Meia Parcela</label>
+    </fieldset>
+
+    <label class="sim-valor">
+      <span>Valor do crédito</span>
+      <output class="sim-valor-atual">R$ 100.000,00</output>
+      <input type="range" name="valor" min="0" max="0" value="0" />
+      <span class="sim-limites"><span class="sim-minimo"></span><span class="sim-maximo"></span></span>
+    </label>
+
+    <button type="submit" class="botao sim-botao">Simular</button>
+  </form>
+
+  <form class="sim-passo" data-passo="2" hidden>
+    <p class="sim-chamada">Qual será a sua próxima conquista?</p>
+    <h2 class="sim-titulo">Preencha seus dados</h2>
+    <p class="sim-resumo"></p>
+    <label class="sim-campo">Nome completo <input type="text" name="nome" autocomplete="name" required /></label>
+    <label class="sim-campo">E-mail <input type="email" name="email" autocomplete="email" required /></label>
+    <label class="sim-campo">Celular <input type="tel" name="celular" autocomplete="tel" inputmode="tel" required /></label>
+    <label class="sim-campo">CEP <input type="text" name="cep" autocomplete="postal-code" inputmode="numeric" required /></label>
+    <label class="sim-aceite">
+      <input type="checkbox" name="aceite" required />
+      <span>Concordo com o tratamento dos meus dados para contato, conforme o Aviso de Privacidade.</span>
+    </label>
+    <div class="sim-acoes">
+      <button type="button" class="botao botao-contorno sim-voltar">Voltar</button>
+      <button type="submit" class="botao sim-botao">Continuar</button>
+    </div>
+  </form>
+
+  <div class="sim-passo sim-final" data-passo="3" hidden>
+    <Icon nome="ok" tamanho={48} />
+    <h2 class="sim-titulo">Parabéns</h2>
+    <p><strong>Você está a um passo de realizar os seus sonhos.</strong></p>
+    <p>Estamos buscando o corretor mais próximo para te contatar.</p>
+    <p class="sim-aviso">Prévia: nenhum dado foi enviado. O envio será ligado ao sistema de leads na versão final.</p>
+    <button type="button" class="botao botao-contorno sim-reiniciar">Nova simulação</button>
+  </div>
+</div>
+
+<style>
+  .simulador {
+    width: 100%;
+    max-width: 370px;
+    padding: 26px 26px 28px;
+    border-top: 4px solid var(--vermelho);
+    border-radius: var(--raio-grande);
+    background: var(--branco);
+    box-shadow: 0 24px 60px rgb(17 24 39 / 0.25);
+    font-size: 14px;
+  }
+
+  .sim-passo {
+    display: grid;
+    gap: 14px;
+  }
+
+  .sim-passo[hidden] {
+    display: none;
+  }
+
+  .sim-chamada {
+    margin: 0;
+    color: var(--grafite);
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+
+  .sim-titulo {
+    margin: -8px 0 0;
+    color: var(--vermelho);
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .sim-categorias legend {
+    width: 100%;
+    margin-bottom: 10px;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .sim-categorias {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .sim-categorias label {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .sim-categorias input,
+  .sim-modo input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sim-categoria-icone {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    background: var(--cinza-claro);
+    color: var(--grafite);
+    transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .sim-categorias label:hover .sim-categoria-icone {
+    border-color: var(--vermelho);
+    color: var(--vermelho);
+  }
+
+  .sim-categorias input:checked + .sim-categoria-icone {
+    border-color: var(--vermelho);
+    background: var(--vermelho);
+    color: var(--branco);
+    box-shadow: 0 8px 18px rgb(205 23 25 / 0.3);
+  }
+
+  .sim-categorias input:focus-visible + .sim-categoria-icone {
+    outline: 3px solid color-mix(in srgb, var(--vermelho) 55%, transparent);
+  }
+
+  .sim-modo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-self: center;
+    width: 100%;
+    max-width: 240px;
+    padding: 3px;
+    border: 1px solid var(--borda);
+    border-radius: 99px;
+  }
+
+  .sim-modo label {
+    padding: 5px 0;
+    border-radius: 99px;
+    color: var(--suave);
+    font-size: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .sim-modo label:has(input:checked) {
+    background: var(--vermelho-escuro);
+    color: var(--branco);
+    font-weight: 500;
+  }
+
+  .sim-modo label:has(input:focus-visible) {
+    outline: 3px solid color-mix(in srgb, var(--vermelho) 55%, transparent);
+  }
+
+  .sim-valor {
+    display: grid;
+    justify-items: center;
+    font-size: 12px;
+  }
+
+  .sim-valor-atual {
+    color: var(--grafite);
+    font-size: 26px;
+    font-weight: 700;
+  }
+
+  .sim-valor input {
+    width: 100%;
+    margin-top: 6px;
+    accent-color: var(--vermelho);
+  }
+
+  .sim-limites {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    color: var(--suave);
+    font-size: 11px;
+  }
+
+  .sim-botao {
+    width: 100%;
+    padding-block: 10px;
+    text-transform: uppercase;
+  }
+
+  .sim-resumo {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: var(--raio);
+    background: var(--cinza);
+  }
+
+  .sim-campo {
+    display: grid;
+    gap: 4px;
+    font-weight: 500;
+  }
+
+  .sim-campo input {
+    padding: 9px 12px;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    font: inherit;
+    font-weight: 400;
+  }
+
+  .sim-campo input:focus {
+    border-color: var(--vermelho);
+    outline: none;
+  }
+
+  .sim-aceite {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .sim-aceite input {
+    accent-color: var(--vermelho);
+  }
+
+  .sim-acoes {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px;
+  }
+
+  .sim-acoes .botao {
+    padding-block: 10px;
+  }
+
+  .sim-final {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .sim-final > :global(.icone) {
+    color: var(--verde);
+  }
+
+  .sim-final p {
+    margin: 0;
+  }
+
+  .sim-aviso {
+    padding: 8px 10px;
+    border-radius: var(--raio);
+    background: #fff6db;
+    color: #6b5300;
+    font-size: 12px;
+  }
+</style>
+
+<script>
+  const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  for (const simulador of document.querySelectorAll('.simulador')) {
+    const categorias = JSON.parse(simulador.dataset.categorias);
+    const [passo1, passo2, passo3] = simulador.querySelectorAll('.sim-passo');
+    const faixa = passo1.querySelector('input[type=range]');
+    const saida = passo1.querySelector('.sim-valor-atual');
+
+    const valores = () => categorias.find((c) => c.id === passo1.categoria.value).valores;
+    const mostrarValor = () => (saida.textContent = moeda.format(valores()[faixa.value]));
+    const trocarCategoria = () => {
+      const lista = valores();
+      faixa.max = String(lista.length - 1);
+      faixa.value = '0';
+      passo1.querySelector('.sim-minimo').textContent = moeda.format(lista[0]);
+      passo1.querySelector('.sim-maximo').textContent = moeda.format(lista.at(-1));
+      mostrarValor();
+    };
+    const mostrar = (passo) => [passo1, passo2, passo3].forEach((p) => (p.hidden = p !== passo));
+
+    // The side tab and the product pages link here with ?categoria=imoveis|veiculos|investimentos
+    const pedida = new URLSearchParams(location.search).get('categoria');
+    if (categorias.some((c) => c.id === pedida)) passo1.categoria.value = pedida;
+
+    passo1.addEventListener('change', (e) => e.target.name === 'categoria' && trocarCategoria());
+    faixa.addEventListener('input', mostrarValor);
+    trocarCategoria();
+
+    passo1.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const categoria = passo1.querySelector('input[name=categoria]:checked').parentElement.textContent.trim();
+      const modo = passo1.modo.value === 'meia-parcela' ? 'meia parcela' : 'crédito';
+      passo2.querySelector('.sim-resumo').textContent = `${categoria} · ${modo} de ${saida.textContent}`;
+      mostrar(passo2);
+      passo2.nome.focus();
+    });
+
+    passo2.querySelector('.sim-voltar').addEventListener('click', () => mostrar(passo1));
+    passo2.addEventListener('submit', (e) => {
+      e.preventDefault();
+      mostrar(passo3);
+    });
+
+    passo3.querySelector('.sim-reiniciar').addEventListener('click', () => {
+      passo2.reset();
+      mostrar(passo1);
+    });
+  }
+</script>

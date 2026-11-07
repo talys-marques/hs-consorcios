@@ -1,0 +1,391 @@
+---
+import Base from '../layouts/Base.astro';
+import Banner from '../components/Banner.astro';
+import Faq from '../components/Faq.astro';
+import Icon from '../components/Icon.astro';
+import { PRODUTOS, CATEGORIAS } from '../data/produtos.mjs';
+import { url } from '../lib/site.mjs';
+import { imagem } from '../lib/imagens.mjs';
+
+export function getStaticPaths() {
+  return PRODUTOS.map((p) => ({ params: { produto: p.caminho }, props: { produto: p } }));
+}
+
+const { produto } = Astro.props;
+const simular = url(`/simulador/?categoria=${produto.grupo}`);
+const atual = `/${produto.caminho}/`;
+const categorias = CATEGORIAS[produto.grupo];
+
+// Sections after the intro alternate between grey and white backgrounds
+const secoes = [produto.possibilidades && 'possibilidades', produto.motivos && 'motivos', 'faq'].filter(Boolean);
+const cinza = (secao) => secoes.indexOf(secao) % 2 === 0;
+---
+
+<Base titulo={produto.titulo} descricao={produto.descricao}>
+  <nav class="categorias" aria-label="Modalidades">
+    <ul class="container">
+      {
+        categorias.map((c) => (
+          <li>
+            <a href={url(c.href)} aria-current={c.href === atual ? 'page' : undefined}>
+              <Icon nome={c.icone} tamanho={20} />
+              {c.titulo}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <a href={simular} class="hero">
+    <Banner nome={produto.hero.imagem} alt={produto.hero.alt} prioridade />
+  </a>
+
+  <section class="secao">
+    <div class="container intro">
+      <div class="intro-texto">
+        <span class="rotulo">Sem juros e sem entrada</span>
+        <h1>{produto.titulo}</h1>
+        {produto.resumo.map((t) => <p>{t}</p>)}
+        <a href={simular} class="botao">Simule agora <Icon nome="seta" tamanho={18} /></a>
+      </div>
+      <ul class="beneficios">
+        {
+          produto.beneficios.map((b) => (
+            <li class="cartao">
+              <span class="beneficio-icone">
+                <Icon nome={b.icone} tamanho={22} />
+              </span>
+              <p>{b.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    produto.destaque && (
+      <section id={produto.destaque.id} class="destaque-produto">
+        <a href={simular}>
+          <Banner nome={produto.destaque.imagem} alt={produto.destaque.alt} />
+        </a>
+      </section>
+    )
+  }
+
+  {
+    produto.possibilidades && (
+      <section class:list={['secao', { 'secao-cinza': cinza('possibilidades') }]}>
+        <div class="container">
+          <div class="secao-titulo">
+            <span class="rotulo">Conquistas</span>
+            <h2>{produto.possibilidades.titulo}</h2>
+          </div>
+          <ul class="possibilidades">
+            {produto.possibilidades.itens.map((item) => (
+              <li class="cartao">
+                <span class="possibilidade-check">
+                  <Icon nome="check" tamanho={18} />
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p class="centro">
+            <a href={simular} class="botao">
+              Faça uma Simulação Agora <Icon nome="seta" tamanho={18} />
+            </a>
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    produto.motivos && (
+      <section class:list={['secao', { 'secao-cinza': cinza('motivos') }]}>
+        <div class="container">
+          <div class="secao-titulo">
+            <span class="rotulo">Vantagens</span>
+            <h2>{produto.motivos.titulo}</h2>
+          </div>
+          <div class:list={['motivos', `motivos-${produto.motivos.itens.length}`]}>
+            {produto.motivos.itens.map((m) => (
+              <article class="cartao">
+                <span class="motivo-icone">
+                  <img src={imagem(m.icone).src} alt="" width="40" height="40" loading="lazy" />
+                </span>
+                <h3>{m.titulo}</h3>
+                <p>{m.texto}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class:list={['secao', { 'secao-cinza': cinza('faq') }]}>
+    <div class="container faq-bloco">
+      <div class="faq-bloco-intro">
+        <span class="rotulo">Tire suas dúvidas</span>
+        <h2>Perguntas frequentes</h2>
+        <p>Os termos mais usados no consórcio, explicados de forma simples.</p>
+        <a href={simular} class="botao">Simule agora <Icon nome="seta" tamanho={18} /></a>
+      </div>
+      <div>
+        <Faq quantidade={4} />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Category tabs ---------- */
+
+  .categorias {
+    position: relative;
+    z-index: 1;
+    background: var(--branco);
+    border-bottom: 1px solid var(--borda);
+  }
+
+  .categorias ul {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 auto;
+    padding-block: 16px;
+    overflow-x: auto;
+    list-style: none;
+    scrollbar-width: none;
+  }
+
+  .categorias ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  .categorias a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid var(--borda);
+    border-radius: 99px;
+    color: var(--grafite);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+  }
+
+  .categorias a :global(.icone) {
+    color: var(--vermelho);
+    transition: color 0.2s;
+  }
+
+  .categorias a:hover {
+    border-color: var(--vermelho);
+    color: var(--vermelho);
+  }
+
+  .categorias a[aria-current='page'] {
+    border-color: var(--vermelho);
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+
+  .categorias a[aria-current='page'] :global(.icone) {
+    color: var(--branco);
+  }
+
+  .hero,
+  .destaque-produto a {
+    display: block;
+  }
+
+  /* ---------- Intro and benefits ---------- */
+
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+    gap: 48px 64px;
+  }
+
+  .intro-texto {
+    position: sticky;
+    top: calc(var(--topo-altura) + 56px);
+  }
+
+  .intro h1 {
+    font-size: clamp(2rem, 1.5rem + 1.8vw, 2.9rem);
+  }
+
+  .intro-texto p {
+    color: var(--suave);
+    font-size: 1.05rem;
+  }
+
+  .intro-texto .botao {
+    margin-top: 12px;
+  }
+
+  .beneficios {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .beneficios li {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  /* An odd last card fills the row instead of leaving a gap */
+  .beneficios li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .beneficios li:hover {
+    border-color: color-mix(in srgb, var(--vermelho) 40%, var(--borda));
+    transform: translateY(-2px);
+  }
+
+  .beneficio-icone {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--vermelho-claro);
+    color: var(--vermelho);
+  }
+
+  .beneficios p {
+    margin: 0;
+    align-self: center;
+    color: var(--grafite);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  /* ---------- What you can do ---------- */
+
+  .possibilidades {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+    margin: 0 0 40px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .possibilidades li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 22px;
+    color: var(--grafite);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .possibilidade-check {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+
+  /* ---------- Reasons ---------- */
+
+  .motivos {
+    display: grid;
+    gap: 24px;
+  }
+
+  .motivos-2 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .motivos-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .motivos article {
+    padding: 32px;
+  }
+
+  .motivo-icone {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+    background: var(--vermelho-claro);
+  }
+
+  .motivos h3 {
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+  }
+
+  .motivos p {
+    margin: 0;
+    color: var(--suave);
+    font-size: 15px;
+  }
+
+  @media (max-width: 960px) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+
+    .intro-texto {
+      position: static;
+    }
+
+    .motivos-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 860px) {
+    .categorias ul {
+      justify-content: flex-start;
+    }
+
+    .motivos-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .beneficios,
+    .motivos-3 {
+      grid-template-columns: 1fr;
+    }
+
+    .motivos article {
+      padding: 24px;
+    }
+  }
+</style>

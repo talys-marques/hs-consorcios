@@ -1,0 +1,93 @@
+---
+// Service channels with phone numbers and opening hours (contact and whistleblowing pages)
+import Icon from './Icon.astro';
+
+const CANAIS = [
+  {
+    titulo: 'Central de Atendimento',
+    texto: 'Tem dúvidas sobre o consórcio ou precisa de ajuda em alguma etapa?',
+    numero: '(51) 3564 8400',
+    tel: '+555135648400',
+    horario: 'De segunda a sexta, das 8h às 18h',
+  },
+  {
+    titulo: 'Central de Vendas',
+    texto: 'Quer adquirir um consórcio ou saber mais sobre nossos planos?',
+    numero: '0800 644 9007',
+    tel: '08006449007',
+    horario: 'De segunda a sexta, das 8h às 18h',
+  },
+  {
+    titulo: 'Ouvidoria',
+    texto: 'Já entrou em contato com os canais de atendimento e ainda precisa de ajuda? A Ouvidoria analisa sua solicitação.',
+    numero: '0800 648 1213',
+    tel: '08006481213',
+    horario: 'De segunda a sexta, das 8h às 12h e das 13h30 às 17h',
+  },
+];
+---
+
+<ul class="canais">
+  {
+    CANAIS.map((c) => (
+      <li class="cartao">
+        <h3>{c.titulo}</h3>
+        <p>{c.texto}</p>
+        <a href={`tel:${c.tel}`} class="canal-numero">
+          <Icon nome="telefone" tamanho={18} />
+          {c.numero}
+        </a>
+        <span class="canal-horario">
+          <Icon nome="relogio" tamanho={15} />
+          {c.horario}
+        </span>
+      </li>
+    ))
+  }
+  <slot />
+</ul>
+
+<style>
+  .canais {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .canais :global(li) {
+    display: grid;
+    gap: 8px;
+    padding: 22px 24px;
+  }
+
+  .canais :global(h3) {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .canais :global(p) {
+    margin: 0;
+    color: var(--suave);
+    font-size: 14px;
+  }
+
+  .canal-numero {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--vermelho);
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .canal-horario {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--suave);
+    font-size: 13px;
+  }
+</style>

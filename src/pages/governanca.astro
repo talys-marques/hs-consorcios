@@ -1,0 +1,150 @@
+---
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+import Icon from '../components/Icon.astro';
+import { DOCUMENTOS } from '../config.mjs';
+import { url } from '../lib/site.mjs';
+
+const POLITICAS = [
+  { titulo: 'Código de Ética', arquivo: DOCUMENTOS.codigoEtica },
+  { titulo: 'Diretrizes da Política de Segurança Cibernética', arquivo: DOCUMENTOS.segurancaCibernetica },
+  { titulo: 'Aviso de Privacidade', arquivo: DOCUMENTOS.avisoPrivacidade },
+  { titulo: 'Política de Cookies', arquivo: DOCUMENTOS.politicaCookies },
+];
+---
+
+<Base titulo="Governança" descricao="Políticas, diretrizes e código de ética da HS Consórcios. Seriedade, ética e competência são os nossos princípios.">
+  <CabecalhoPagina
+    titulo="Governança"
+    rotulo="Seriedade, Ética e Competência"
+    texto="Nessa página você poderá acessar nossas principais políticas e diretrizes, além do nosso código de ética."
+    imagem="hero-governanca"
+  />
+
+  <section class="secao">
+    <div class="container governanca">
+      <div>
+        <p class="destaque-texto">
+          Para a HS Consórcios honestidade e a seriedade são o nosso foco fundamental. É o que move o nosso pensar e nosso crescimento.
+        </p>
+        <p>
+          Acreditamos que nunca devemos perder o senso de justiça e adotamos como princípios: <strong>Seriedade</strong>, <strong>Ética</strong> e
+          <strong>Competência</strong>. Estamos sempre focados na melhoria contínua, fazendo dos eventuais erros, uma oportunidade para melhoria e crescimento.
+        </p>
+      </div>
+      <div>
+        <h2>Políticas e diretrizes</h2>
+        <ul class="documentos documentos-coluna">
+          {
+            POLITICAS.map((d) => (
+              <li>
+                <a href={url(d.arquivo)} target="_blank" rel="noopener" class="documento">
+                  <span class="documento-icone">
+                    <Icon nome="documento" tamanho={22} />
+                  </span>
+                  <span>
+                    <strong>{d.titulo}</strong>
+                    <small>PDF</small>
+                  </span>
+                  <Icon nome="baixar" tamanho={18} class="documento-baixar" />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao secao-cinza">
+    <div class="container">
+      <div class="secao-titulo">
+        <span class="rotulo">Veja também</span>
+        <h2>Transparência</h2>
+      </div>
+      <div class="veja-tambem">
+        <a href={url('/sobre-nos/#demonstracoes')} class="cartao">
+          <Icon nome="tendencia" tamanho={26} />
+          <strong>Demonstrações Financeiras</strong>
+          <span>Demonstrações semestrais e anuais da instituição.</span>
+        </a>
+        <a href={url('/sobre-nos/#ouvidoria')} class="cartao">
+          <Icon nome="conversa" tamanho={26} />
+          <strong>Relatórios de Ouvidoria</strong>
+          <span>Relatórios semestrais da Ouvidoria da HS Consórcios.</span>
+        </a>
+        <a href={url('/canal-de-denuncias/')} class="cartao">
+          <Icon nome="escudo" tamanho={26} />
+          <strong>Canal de Denúncias</strong>
+          <span>Canal seguro para reportar condutas irregulares, sem precisar se identificar.</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .governanca {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 48px 72px;
+  }
+
+  .governanca p {
+    color: var(--suave);
+    font-size: 1.05rem;
+  }
+
+  .governanca .destaque-texto {
+    color: var(--grafite);
+    font-size: 1.35rem;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .governanca h2 {
+    font-size: 1.5rem;
+  }
+
+  .documentos-coluna {
+    grid-template-columns: 1fr;
+  }
+
+  .veja-tambem {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .veja-tambem a {
+    display: grid;
+    gap: 8px;
+    padding: 28px;
+    color: var(--suave);
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .veja-tambem a:hover {
+    border-color: var(--vermelho);
+    transform: translateY(-2px);
+  }
+
+  .veja-tambem :global(.icone) {
+    margin-bottom: 8px;
+    color: var(--vermelho);
+  }
+
+  .veja-tambem strong {
+    color: var(--grafite);
+    font-size: 1.15rem;
+  }
+
+  @media (max-width: 860px) {
+    .governanca,
+    .veja-tambem {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

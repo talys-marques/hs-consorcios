@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+import Canais from '../components/Canais.astro';
+import EnvioPrevia from '../components/EnvioPrevia.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Base
+  titulo="Canal de Denúncias"
+  descricao="Canal da HS Consórcios para reportar, sem necessidade de identificação, situações com indícios de ilicitude relacionadas às atividades da instituição."
+>
+  <CabecalhoPagina
+    titulo="Canal de Denúncias"
+    rotulo="Conformidade"
+    texto="Um canal seguro para reportar situações com indícios de ilicitude, de qualquer natureza, relacionadas às atividades da instituição."
+  />
+
+  <section class="secao">
+    <div class="container denuncias">
+      <div>
+        <div class="denuncias-intro">
+          <span class="icone-anonimo"><Icon nome="escudo" tamanho={26} /></span>
+          <p>
+            Em conformidade aos normativos emitidos pelo Banco Central do Brasil, a HS Consórcios disponibiliza este canal de comunicação por meio do qual
+            funcionários, colaboradores, clientes, usuários, parceiros ou fornecedores podem reportar, <strong>sem a necessidade de se identificarem</strong>,
+            situações com indícios de ilicitude, de qualquer natureza, relacionadas às atividades da instituição.
+          </p>
+        </div>
+
+        <form class="formulario cartao denuncias-form" data-previa>
+          <div class="campo-inteiro">
+            <h2>Faça sua manifestação</h2>
+            <p class="form-ajuda">Relate o fato com o máximo de detalhes que puder. Os dados de identificação são opcionais.</p>
+          </div>
+          <label class="campo">Nome <span class="opcional">(opcional)</span><input type="text" name="nome" autocomplete="name" /></label>
+          <label class="campo">E-mail <span class="opcional">(opcional)</span><input type="email" name="email" autocomplete="email" /></label>
+          <label class="campo">Telefone <span class="opcional">(opcional)</span><input type="tel" name="telefone" autocomplete="tel" /></label>
+          <label class="campo">Nome do envolvido * <input type="text" name="envolvido" required /></label>
+          <label class="campo">Quando aconteceu? * <input type="date" name="data" required /></label>
+          <label class="campo">Como e quantas vezes aconteceu? * <input type="text" name="frequencia" required /></label>
+          <label class="campo campo-inteiro">Descrição do fato * <textarea name="descricao" required></textarea></label>
+          <label class="campo campo-inteiro">Você já reportou essa situação anteriormente? * <textarea name="reportado" required></textarea></label>
+          <label class="campo campo-inteiro">
+            Anexo (PDF, JPEG ou DOC) <span class="opcional">(opcional)</span>
+            <input type="file" name="anexo" accept=".pdf,.jpg,.jpeg,.doc,.docx" multiple />
+          </label>
+          <p class="aviso" role="status" hidden>
+            Prévia: a manifestação não foi enviada. Este formulário precisa de um backend com sigilo e registro antes de ir ao ar.
+          </p>
+          <div class="formulario-acoes">
+            <button type="submit" class="botao">Enviar manifestação <Icon nome="seta" tamanho={18} /></button>
+          </div>
+        </form>
+      </div>
+
+      <aside>
+        <h2 class="canais-titulo">Outros canais</h2>
+        <Canais />
+      </aside>
+    </div>
+  </section>
+
+  <EnvioPrevia />
+</Base>
+
+<style>
+  .denuncias {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    align-items: start;
+    gap: 40px;
+  }
+
+  .denuncias-intro {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 28px;
+    padding: 24px 28px;
+    border-radius: var(--raio-grande);
+    background: var(--vermelho-claro);
+  }
+
+  .denuncias-intro p {
+    margin: 0;
+    color: var(--grafite);
+  }
+
+  .icone-anonimo {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+
+  .denuncias-form {
+    padding: 32px;
+  }
+
+  .denuncias-form h2,
+  .canais-titulo {
+    margin: 0 0 4px;
+    font-size: 1.5rem;
+  }
+
+  .canais-titulo {
+    margin-bottom: 18px;
+  }
+
+  .form-ajuda {
+    margin: 0;
+    color: var(--suave);
+  }
+
+  @media (max-width: 960px) {
+    .denuncias {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .denuncias-form,
+    .denuncias-intro {
+      padding: 24px;
+    }
+
+    .denuncias-intro {
+      flex-direction: column;
+    }
+  }
+</style>

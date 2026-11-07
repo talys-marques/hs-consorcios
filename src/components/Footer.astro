@@ -1,0 +1,103 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import logo from '../assets/img/logo.svg';
+import logoBc from '../assets/img/logo-bc.svg';
+import logoAbac from '../assets/img/logo-abac.svg';
+import appStore from '../assets/img/app-store.png';
+import googlePlay from '../assets/img/google-play.png';
+import { CONTATO, REDES, RODAPE, SISTEMAS } from '../config.mjs';
+import { url } from '../lib/site.mjs';
+
+const ano = new Date().getFullYear();
+// PDFs and other sites open in a new tab
+const novaAba = (href) => (/^https?:|\.pdf$/.test(href) ? { target: '_blank', rel: 'noopener' } : {});
+---
+
+<footer class="rodape">
+  <div class="rodape-principal">
+    <div class="container">
+      <div class="rodape-topo">
+        <a href={url('/')} aria-label="HS Consórcios – página inicial">
+          <img src={logo.src} alt="HS Consórcios" width="200" height="50" loading="lazy" />
+        </a>
+        <ul class="rodape-redes">
+          {
+            REDES.map((r) => (
+              <li>
+                <a href={r.href} target="_blank" rel="noopener" aria-label={r.nome}>
+                  <Icon nome={r.icone} tamanho={18} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="rodape-colunas">
+        {
+          RODAPE.map((coluna) => (
+            <div>
+              <h2 class="rodape-titulo">{coluna.titulo}</h2>
+              <ul class="rodape-links">
+                {coluna.links.map((l) => (
+                  <li>
+                    <a href={url(l.href)} {...novaAba(l.href)}>
+                      {l.titulo}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="rodape-selos">
+        <div class="rodape-orgaos">
+          <a href={SISTEMAS.bancoCentral} target="_blank" rel="noopener" aria-label="Banco Central do Brasil">
+            <img src={logoBc.src} alt="Banco Central do Brasil" width={logoBc.width} height={logoBc.height} loading="lazy" />
+          </a>
+          <a href={SISTEMAS.abac} target="_blank" rel="noopener" aria-label="ABAC – Associação Brasileira de Administradoras de Consórcios">
+            <img src={logoAbac.src} alt="ABAC" width={logoAbac.width} height={logoAbac.height} loading="lazy" />
+          </a>
+        </div>
+        <div class="rodape-app">
+          <p>Baixe o app da HS Consórcios:</p>
+          <div>
+            <a href={SISTEMAS.appStore} target="_blank" rel="noopener">
+              <Image src={appStore} alt="Disponível na App Store" width={136} densities={[1, 2]} />
+            </a>
+            <a href={SISTEMAS.googlePlay} target="_blank" rel="noopener">
+              <Image src={googlePlay} alt="Disponível no Google Play" width={136} densities={[1, 2]} />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rodape-empresa">
+    <div class="container rodape-empresa-h">
+      <address>
+        <strong>{CONTATO.razaoSocial}</strong><br />
+        CNPJ: {CONTATO.cnpj}<br />
+        {CONTATO.endereco.map((linha, i) => (i ? [<br />, linha] : linha))}
+      </address>
+      <ul class="rodape-telefones">
+        {
+          CONTATO.telefones.map((t) => (
+            <li>
+              <Icon nome="telefone" tamanho={16} />
+              {t.titulo}: <a href={`tel:${t.tel}`}>{t.numero}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="rodape-base">
+    <div class="container">Todos os direitos reservados – HS Consórcios, {ano}.</div>
+  </div>
+</footer>

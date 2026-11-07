@@ -1,0 +1,248 @@
+---
+import Base from '../../layouts/Base.astro';
+import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
+import Icon from '../../components/Icon.astro';
+import unidades from '../../data/unidades.json';
+import { url } from '../../lib/site.mjs';
+
+// HS Consórcios' own branches (the partners come from src/data/unidades.json)
+const FILIAIS = [
+  { cidade: 'Novo Hamburgo – RS', endereco: 'Rua General Osório, 644 – Centro · CEP 93510-205', telefone: '(51) 3582-2769', link: 'tel:+555135822769' },
+  { cidade: 'Cuiabá – MT', endereco: 'Av. Historiador Rubens de Mendonça, 1756 – Ed. SB Tower, Sala 410 – Alvorada · CEP 78048-340', telefone: '(65) 99309-2156', link: 'tel:+5565993092156' },
+  { cidade: 'Rio de Janeiro – RJ', endereco: 'Avenida das Américas, 3333, Sala 405 · CEP 22631-003' },
+  { cidade: 'Campinas – SP', endereco: 'Rua Barão Geraldo de Rezende, 97 – Sala 105 – Botafogo · CEP 13020-440', telefone: '(19) 3342-5449', link: 'tel:+551933425449' },
+  { cidade: 'Curitiba – PR', endereco: 'Av. Visconde de Guarapuava, 4628 – Sala 603 – Batel · CEP 80240-010', telefone: '(41) 98853-6789', link: 'https://wa.me/5541988536789', whatsapp: true },
+  { cidade: 'Londrina – PR', endereco: 'Rua Prefeito Hugo Cabral, 136 – Sala 1 · CEP 86020-110', telefone: '(43) 3351-6003', link: 'tel:+554333516003' },
+  { cidade: 'Goiânia – GO', endereco: 'Av. T-2, 471 – Sala 1001, Ed. Focus Business – Setor Bueno · CEP 74210-005' },
+];
+
+const totalUnidades = unidades.reduce((n, e) => n + e.cidades.reduce((m, c) => m + c.unidades.length, 0), 0);
+---
+
+<Base titulo="Onde encontrar" descricao="Encontre uma unidade ou corretor parceiro da HS Consórcios perto de você, em todo o Brasil.">
+  <CabecalhoPagina
+    titulo="Onde encontrar"
+    rotulo="Perto de você"
+    texto={`Encontre uma HS Consórcios próxima de você: são ${totalUnidades.toLocaleString('pt-BR')} parceiros em ${unidades.length} estados, além das nossas filiais.`}
+  />
+
+  <section class="secao busca-secao">
+    <div class="container">
+      <form class="busca cartao" data-fonte={url('/onde-encontrar/unidades.json')}>
+        <h2>Nos diga onde você está</h2>
+        <label class="campo">
+          Estado
+          <select name="estado" required>
+            <option value="">Selecione seu estado</option>
+            {unidades.map((e) => <option value={e.uf}>{e.uf}</option>)}
+          </select>
+        </label>
+        <label class="campo">
+          Cidade
+          <select name="cidade" required disabled>
+            <option value="">Selecione o estado primeiro</option>
+          </select>
+        </label>
+        <button type="submit" class="botao"><Icon nome="busca" tamanho={18} /> Buscar unidades</button>
+      </form>
+
+      <div class="resultado" aria-live="polite" hidden>
+        <p class="resultado-titulo"></p>
+        <ul class="unidades"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao secao-cinza">
+    <div class="container">
+      <div class="secao-titulo">
+        <span class="rotulo">Atendimento próprio</span>
+        <h2>Filiais HS Consórcios</h2>
+      </div>
+      <ul class="filiais">
+        {
+          FILIAIS.map((f) => (
+            <li class="cartao">
+              <h3>{f.cidade.split(' – ')[0]}</h3>
+              <p class="filial-uf">{f.cidade}</p>
+              <p class="unidade-linha">
+                <Icon nome="local" tamanho={18} />
+                <span>{f.endereco}</span>
+              </p>
+              {f.telefone && (
+                <p class="unidade-linha">
+                  <Icon nome={f.whatsapp ? 'whatsapp' : 'telefone'} tamanho={18} />
+                  <a href={f.link} {...(f.whatsapp ? { target: '_blank', rel: 'noopener' } : {})}>
+                    {f.telefone}
+                  </a>
+                </p>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <template id="modelo-unidade">
+    <li class="cartao unidade">
+      <h3></h3>
+      <p class="unidade-linha unidade-endereco"><svg class="icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg><span></span></p>
+      <p class="unidade-linha unidade-telefone"><svg class="icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><a></a></p>
+      <p class="unidade-linha unidade-email"><svg class="icone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg><a></a></p>
+    </li>
+  </template>
+</Base>
+
+
+<style>
+  .busca-secao .container {
+    display: grid;
+    gap: 32px;
+  }
+
+  .busca {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    align-items: end;
+    gap: 18px 20px;
+    padding: 28px 32px 32px;
+  }
+
+  .busca h2 {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 1.4rem;
+  }
+
+  .busca .botao {
+    padding-block: 12px;
+  }
+
+  .resultado-titulo {
+    margin: 0 0 18px;
+    color: var(--grafite);
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .unidades,
+  .filiais {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .unidades :global(.unidade),
+  .filiais li {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 22px 24px;
+  }
+
+  .unidades :global(h3),
+  .filiais h3 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    text-transform: capitalize;
+  }
+
+  .filial-uf {
+    margin: -8px 0 4px;
+    color: var(--suave);
+    font-size: 14px;
+  }
+
+  .unidades :global(.unidade-linha),
+  .unidade-linha {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    color: var(--suave);
+    font-size: 14px;
+    line-height: 1.45;
+    word-break: break-word;
+  }
+
+  .unidades :global(.unidade-linha .icone),
+  .unidade-linha :global(.icone) {
+    flex: none;
+    margin-top: 1px;
+    color: var(--vermelho);
+  }
+
+  .unidades :global(.unidade-linha[hidden]) {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    .busca {
+      grid-template-columns: 1fr;
+      padding: 24px;
+    }
+  }
+</style>
+
+<script>
+  const form = document.querySelector('.busca');
+  const estado = form.estado;
+  const cidade = form.cidade;
+  const resultado = document.querySelector('.resultado');
+  const lista = resultado.querySelector('.unidades');
+  const modelo = document.querySelector('#modelo-unidade');
+  let dados;
+
+  const carregar = async () => (dados ??= await (await fetch(form.dataset.fonte)).json());
+
+  // 10 or 11 digits -> (51) 3564-8400 / (51) 99999-9999
+  const formatarTelefone = (numero) => {
+    const d = numero.replace(/\D/g, '');
+    if (d.length < 10) return numero;
+    return `(${d.slice(0, 2)}) ${d.slice(2, -4)}-${d.slice(-4)}`;
+  };
+
+  // Names come in capitals from the API
+  const capitalizar = (texto) => texto.toLowerCase().replace(/(^|\s)(\p{L})/gu, (_, s, l) => s + l.toUpperCase());
+
+  estado.addEventListener('change', async () => {
+    cidade.disabled = true;
+    cidade.replaceChildren(new Option('Carregando…', ''));
+    const uf = (await carregar()).find((e) => e.uf === estado.value);
+    cidade.replaceChildren(new Option(uf ? 'Selecione sua cidade' : 'Selecione o estado primeiro', ''), ...(uf?.cidades ?? []).map((c) => new Option(c.nome, c.nome)));
+    cidade.disabled = !uf;
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const encontradas = (await carregar()).find((u) => u.uf === estado.value)?.cidades.find((c) => c.nome === cidade.value)?.unidades ?? [];
+
+    lista.replaceChildren(
+      ...encontradas.map((u) => {
+        const item = modelo.content.firstElementChild.cloneNode(true);
+        item.querySelector('h3').textContent = capitalizar(u.nome);
+        item.querySelector('.unidade-endereco span').textContent = capitalizar(u.endereco);
+        item.querySelector('.unidade-endereco').hidden = !u.endereco;
+        const tel = item.querySelector('.unidade-telefone a');
+        tel.textContent = formatarTelefone(u.telefone);
+        tel.href = `tel:+55${u.telefone.replace(/\D/g, '')}`;
+        item.querySelector('.unidade-telefone').hidden = !u.telefone;
+        const email = item.querySelector('.unidade-email a');
+        email.textContent = u.email;
+        email.href = `mailto:${u.email}`;
+        item.querySelector('.unidade-email').hidden = !u.email;
+        return item;
+      }),
+    );
+
+    const plural = encontradas.length === 1 ? 'unidade' : 'unidades';
+    resultado.querySelector('.resultado-titulo').textContent = encontradas.length
+      ? `${encontradas.length} ${plural} da HS Consórcios em ${cidade.value} – ${estado.value}:`
+      : `Nenhuma unidade encontrada em ${cidade.value} – ${estado.value}.`;
+    resultado.hidden = false;
+    resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+</script>

@@ -1,0 +1,15 @@
+---
+// Forms marked with `data-previa` still need a backend: in WordPress they were Elementor forms
+// posted to admin-ajax.php. Until then, submitting only validates the fields and shows a notice.
+---
+
+<script>
+  for (const form of document.querySelectorAll('form[data-previa]')) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const aviso = form.querySelector('.aviso');
+      aviso.hidden = false;
+      aviso.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+</script>

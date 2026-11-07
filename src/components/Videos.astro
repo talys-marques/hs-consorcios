@@ -1,0 +1,168 @@
+---
+// YouTube videos as thumbnails. The player (youtube-nocookie) only loads when the visitor clicks one.
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { VIDEOS } from '../config.mjs';
+import { imagem } from '../lib/imagens.mjs';
+---
+
+<div class="videos">
+  <ul class="videos-trilho">
+    {
+      VIDEOS.map((v) => (
+        <li>
+          <button type="button" class="video" data-id={v.id} aria-label={`Assistir: ${v.titulo}`}>
+            <Image src={imagem(v.imagem)} alt="" widths={[400, 800]} sizes="(max-width: 700px) 85vw, 370px" />
+            <span class="video-play">
+              <Icon nome="play" tamanho={30} />
+            </span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="videos-setas">
+    <button type="button" class="videos-anterior" aria-label="Vídeos anteriores"><Icon nome="esquerda" tamanho={22} /></button>
+    <button type="button" class="videos-proximo" aria-label="Próximos vídeos"><Icon nome="direita" tamanho={22} /></button>
+  </div>
+</div>
+
+<style>
+  .videos-trilho {
+    display: grid;
+    grid-auto-columns: calc((100% - 2 * 20px) / 3);
+    grid-auto-flow: column;
+    gap: 20px;
+    margin: 0;
+    padding: 0 0 4px;
+    overflow-x: auto;
+    list-style: none;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .videos-trilho::-webkit-scrollbar {
+    display: none;
+  }
+
+  .videos-trilho li {
+    scroll-snap-align: start;
+  }
+
+  .video {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--raio);
+    background: var(--grafite);
+    cursor: pointer;
+  }
+
+  .video :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+
+  .video:hover :global(img) {
+    transform: scale(1.04);
+  }
+
+  .video :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .video-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border: 2px solid rgb(255 255 255 / 0.85);
+    border-radius: 50%;
+    background: rgb(0 0 0 / 0.35);
+    color: var(--branco);
+    transform: translate(-50%, -50%);
+    transition: background 0.2s;
+  }
+
+  .video:hover .video-play {
+    background: var(--vermelho);
+  }
+
+  .videos-setas {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .videos-setas button {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--borda);
+    border-radius: 50%;
+    background: var(--branco);
+    color: var(--grafite);
+    cursor: pointer;
+  }
+
+  .videos-setas button:hover {
+    border-color: var(--vermelho);
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+
+  @media (max-width: 900px) {
+    .videos-trilho {
+      grid-auto-columns: calc((100% - 20px) / 2);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .videos-trilho {
+      grid-auto-columns: 85%;
+    }
+  }
+</style>
+
+<script>
+  const trilho = document.querySelector('.videos-trilho');
+  const passo = () => trilho.querySelector('li').offsetWidth + 20;
+  document.querySelector('.videos-anterior').addEventListener('click', () => trilho.scrollBy({ left: -passo(), behavior: 'smooth' }));
+  document.querySelector('.videos-proximo').addEventListener('click', () => trilho.scrollBy({ left: passo(), behavior: 'smooth' }));
+
+  for (const botao of document.querySelectorAll('.video')) {
+    botao.addEventListener(
+      'click',
+      () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${botao.dataset.id}?autoplay=1&rel=0`;
+        iframe.title = botao.getAttribute('aria-label');
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        iframe.allowFullscreen = true;
+        // An iframe can't live inside a button, so the button is swapped for a box of the same size
+        const caixa = document.createElement('div');
+        caixa.className = botao.className;
+        // Keeps Astro's scoped-style attribute so the box gets the same styles
+        for (const { name } of botao.attributes) if (name.startsWith('data-astro-cid')) caixa.setAttribute(name, '');
+        caixa.append(iframe);
+        botao.replaceWith(caixa);
+      },
+      { once: true },
+    );
+  }
+</script>

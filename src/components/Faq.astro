@@ -1,0 +1,37 @@
+---
+import Icon from './Icon.astro';
+import { FAQ } from '../config.mjs';
+import { url } from '../lib/site.mjs';
+
+interface Props {
+  // How many questions to show, from the top of the list
+  quantidade?: number;
+  // Questions to show instead of the short list in FAQ
+  itens?: { pergunta: string; resposta: string }[];
+  // Link to the full list on the contact page
+  rodape?: boolean;
+}
+
+const { itens = FAQ, quantidade = itens.length, rodape = true } = Astro.props;
+---
+
+<div class="faq">
+  {
+    itens.slice(0, quantidade).map((item) => (
+      <details>
+        <summary>
+          {item.pergunta}
+          <Icon nome="baixo" tamanho={20} />
+        </summary>
+        <p>{item.resposta}</p>
+      </details>
+    ))
+  }
+</div>
+{
+  rodape && (
+    <p class="faq-rodape">
+      Ainda em dúvida? Visite nossa área de <a href={url('/contato/#perguntas-frequentes')}>Perguntas Frequentes</a>.
+    </p>
+  )
+}

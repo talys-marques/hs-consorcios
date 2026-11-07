@@ -1,0 +1,83 @@
+---
+import Icon from './Icon.astro';
+import logo from '../assets/img/logo.svg';
+import { ATALHOS, NAVEGACAO, REDES } from '../config.mjs';
+import { url } from '../lib/site.mjs';
+
+// Current section: "/" only on the home page, any other item also on its subpages
+const atual = (href) => {
+  const caminho = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
+  return href === '/' ? caminho === '/' : href.startsWith('/') && caminho.startsWith(href);
+};
+const externo = (href) => /^https?:/.test(href);
+---
+
+<header class="topo">
+  <div class="topo-barra">
+    <div class="container topo-barra-h">
+      <ul class="topo-atalhos">
+        {ATALHOS.map((a) => <li><a href={a.href}>{a.titulo}</a></li>)}
+      </ul>
+      <ul class="topo-redes">
+        {
+          REDES.map((r) => (
+            <li>
+              <a href={r.href} target="_blank" rel="noopener" aria-label={r.nome}>
+                <Icon nome={r.icone} tamanho={16} />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="topo-principal">
+    <div class="container topo-principal-h">
+      <a href={url('/')} class="topo-logo" aria-label="HS Consórcios – página inicial">
+        <img src={logo.src} alt="HS Consórcios" width="200" height="50" />
+      </a>
+
+      <a href={url('/simulador/')} class="botao botao-claro topo-simule">Simule Agora</a>
+
+      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu-principal">
+        <Icon nome="menu" tamanho={26} class="menu-abrir" />
+        <Icon nome="fechar" tamanho={26} class="menu-fechar" />
+        <span class="sr-only">Menu</span>
+      </button>
+
+      <nav id="menu-principal" class="menu" aria-label="Principal">
+        <ul>
+          {
+            NAVEGACAO.map((item) => (
+              <li>
+                <a href={url(item.href)} class:list={{ atual: atual(item.href) }} aria-current={atual(item.href) ? 'page' : undefined}>
+                  {item.titulo}
+                  {externo(item.href) && <span class="sr-only"> (site atual)</span>}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <ul class="menu-atalhos">
+          {ATALHOS.map((a) => <li><a href={a.href}>{a.titulo}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector('.topo');
+  const botao = document.querySelector('.menu-botao');
+
+  botao.addEventListener('click', () => {
+    const aberto = header.classList.toggle('menu-aberto');
+    botao.setAttribute('aria-expanded', String(aberto));
+    document.body.classList.toggle('sem-rolagem', aberto);
+  });
+
+  const marcarRolagem = () => header.classList.toggle('rolado', window.scrollY > 40);
+  marcarRolagem();
+  window.addEventListener('scroll', marcarRolagem, { passive: true });
+</script>

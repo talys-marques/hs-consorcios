@@ -1,0 +1,424 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+import Icon from '../components/Icon.astro';
+import imgLances from '../assets/img/lances.png';
+import imgMetade from '../assets/img/metade.png';
+import imgCinquenta from '../assets/img/cinquenta-porcento.png';
+import { DOCUMENTOS } from '../config.mjs';
+import { url } from '../lib/site.mjs';
+
+// The WordPress page only had the heading for this part; the steps summarize the FAQ answers
+const PASSOS = [
+  { icone: 'calculadora', titulo: 'Simule', texto: 'Escolha entre imóveis, veículos ou investimentos e o valor da carta de crédito que cabe no seu orçamento.' },
+  { icone: 'usuarios', titulo: 'Entre em um grupo', texto: 'Você adquire uma cota em um grupo de consorciados, com prazo e parcelas definidos em contrato.' },
+  { icone: 'calendario-ok', titulo: 'Pague e participe', texto: 'Em dia com as parcelas, você concorre todo mês pelo sorteio da Loteria Federal e pode ofertar lances.' },
+  { icone: 'chave', titulo: 'Seja contemplado', texto: 'Com a carta de crédito liberada, você compra o bem pelo valor à vista, onde e com quem quiser.' },
+];
+
+const LANCES = [
+  {
+    titulo: 'Lance Fixo',
+    texto:
+      'Nessa modalidade a administradora define percentual mínimo a ser ofertado como lance para determinados grupos, isso corresponde a uma quantidade especifica de parcelas. Havendo empate a definição é feita de acordo com o sorteio da Loteria Federal.',
+  },
+  { titulo: 'Lance Fidelidade', texto: 'Essa modalidade é uma variação do lance fixo, mas no qual podem participar apenas os consorciados que não atrasaram as parcelas dos últimos 6 meses.' },
+  {
+    titulo: 'Lance Limitado',
+    texto:
+      'Para essa modalidade a partir de determinado período, são permitidos lances com um limite específico de parcelas. A cota contemplada será a que ofertar a maior quantidade de parcelas dentro do limite.',
+  },
+  {
+    titulo: 'Lance Livre',
+    texto:
+      'Essa é a modalidade mais comum. O consorciado escolhe o valor de acordo com a quantidade de parcelas que deseja ofertar. Na HS Consórcios ele pode ofertar como lance o seu carro usado, para consórcios de automóvel, ou o seu FGTS, para consórcio de imóvel residencial. Sendo o maior lance o vencedor.',
+  },
+  {
+    titulo: 'Lance Embutido',
+    texto:
+      'Essa modalidade é um facilitador ao consorciado que não possui um valor considerável para ofertar como lance. Sendo possível ofertar parte da carta de crédito como lance, de acordo com as regras da administradora. Na HS Consórcios o consorciado pode ofertar até 30% do valor da carta de crédito como lance.',
+  },
+  {
+    titulo: 'Lance Retido',
+    texto:
+      'Nessa modalidade o consorciado tem a possibilidade de ofertar o seu carro usado como valor do lance, para consórcio de automóvel, dentro das regras estabelecidas pela administradora. A avaliação do veículo é feita através da tabela Fipe e Molicar. Se tornando essa uma oportunidade de você conseguir trocar o seu veículo mais rápido.',
+  },
+  {
+    titulo: 'Lance Diluído',
+    texto:
+      'Nessa modalidade o consorciado tem a opção de usar o lance para diminuir o valor das parcelas mensais restantes, ao invés de antecipar o valor total de um número determinado de parcelas.',
+  },
+];
+---
+
+<Base titulo="Entenda + sobre consórcio" descricao="Como funciona o consórcio, os tipos de lance, a meia parcela e o regulamento geral dos grupos da HS Consórcios.">
+  <CabecalhoPagina
+    titulo="Entenda + sobre consórcio"
+    rotulo="Guia do consórcio"
+    texto="Quer entender melhor o que é consórcio e como ele funciona? Separamos algumas informações para te ajudar."
+    imagem="entenda-mais"
+  >
+    <nav class="atalhos-pagina" aria-label="Nesta página">
+      <a href="#como-funciona">Passo a passo</a>
+      <a href="#lance">Lance</a>
+      <a href="#meia-parcela">Meia parcela</a>
+      <a href="#regulamento">Regulamento</a>
+    </nav>
+  </CabecalhoPagina>
+
+  <section class="secao" id="como-funciona">
+    <div class="container">
+      <div class="secao-titulo">
+        <span class="rotulo">Como fazer um consórcio?</span>
+        <h2>Entenda passo a passo</h2>
+      </div>
+      <ol class="passos">
+        {
+          PASSOS.map((p, i) => (
+            <li class="cartao">
+              <span class="passo-numero">{String(i + 1).padStart(2, '0')}</span>
+              <span class="passo-icone">
+                <Icon nome={p.icone} tamanho={24} />
+              </span>
+              <h3>{p.titulo}</h3>
+              <p>{p.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="secao secao-cinza" id="lance">
+    <div class="container">
+      <div class="dividido">
+        <Image src={imgLances} alt="" widths={[600]} class="ilustracao" />
+        <div>
+          <span class="rotulo">Lance</span>
+          <h2>Lance é um valor ofertado pelo cliente com o intuito de antecipar a sua contemplação.</h2>
+          <p>Todos os consorciados, em dia com a parcela mensal, podem efetuar lances, de acordo com as características do grupo ao qual participam.</p>
+        </div>
+      </div>
+
+      <h3 class="subtitulo">Conheça os diferentes tipos de lance</h3>
+      <ul class="lances">
+        {
+          LANCES.map((l) => (
+            <li class="cartao">
+              <h4>{l.titulo}</h4>
+              <p>{l.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="nota"><strong>Em todas as modalidades</strong>, em caso de empate, o vencedor é definido pelo sorteio da Loteria Federal.</p>
+    </div>
+  </section>
+
+  <section class="secao" id="meia-parcela">
+    <div class="container">
+      <div class="dividido dividido-invertido">
+        <Image src={imgMetade} alt="" widths={[600]} class="ilustracao" />
+        <div>
+          <span class="rotulo">Meia parcela</span>
+          <h2>Como funciona a meia parcela?</h2>
+          <p>
+            Aqui na HS Consórcios, você pode contar com a opção de pagar apenas <strong>metade da parcela</strong> até a contemplação, em todas as modalidades.
+            Essa é uma ótima alternativa para quem paga aluguel, mas não abdica de buscar a tão sonhada casa própria. Ou ainda, para quem quer trocar ou comprar
+            um automóvel novo. As parcelas são menores, dessa forma não comprometendo a renda mensal.
+          </p>
+        </div>
+      </div>
+
+      <div class="cinquenta">
+        <Image src={imgCinquenta} alt="" widths={[600]} class="ilustracao" />
+        <div>
+          <strong class="cinquenta-numero">50%</strong>
+          <p>
+            Quando contemplado, o consorciado pode escolher se quer continuar pagando a metade da parcela e adquirir o valor da carta de crédito equivalente às
+            prestações pagas, voltar à parcela cheia e abater a diferença do valor total da carta de crédito ou ainda, manter o plano, com a diferença diluída no
+            restante das parcelas.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chamada">
+    <div class="container chamada-h">
+      <div>
+        <h2>Aproveite as vantagens do consórcio.</h2>
+        <p>Aqui você tem flexibilidade, mesmo depois da contemplação da carta de crédito.</p>
+      </div>
+      <a href={url('/simulador/')} class="botao botao-claro">Faça uma simulação <Icon nome="seta" tamanho={18} /></a>
+    </div>
+  </section>
+
+  <section class="secao" id="regulamento">
+    <div class="container">
+      <div class="regulamento cartao">
+        <span class="regulamento-icone"><Icon nome="documento" tamanho={30} /></span>
+        <div>
+          <h2>Regulamento Geral</h2>
+          <p>Acesse o regulamento geral de Grupos de Consórcio no link abaixo.</p>
+        </div>
+        <a href={url(DOCUMENTOS.regulamentoGeral)} class="botao" target="_blank" rel="noopener"><Icon nome="baixar" tamanho={18} /> Baixar regulamento</a>
+      </div>
+      <p class="faq-rodape centro">
+        Ainda em dúvida? Visite nossa área de <a href={url('/contato/#perguntas-frequentes')}>Perguntas Frequentes</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .atalhos-pagina {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .atalhos-pagina a {
+    padding: 9px 18px;
+    border: 1px solid rgb(255 255 255 / 0.5);
+    border-radius: 99px;
+    color: var(--branco);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .atalhos-pagina a:hover {
+    background: var(--branco);
+    color: var(--vermelho);
+  }
+
+  .passos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .passos li {
+    position: relative;
+    padding: 28px 24px;
+  }
+
+  .passo-numero {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+    color: var(--borda);
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .passo-icone {
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 18px;
+    border-radius: 14px;
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+
+  .passos h3 {
+    margin-bottom: 8px;
+  }
+
+  .passos p {
+    margin: 0;
+    color: var(--suave);
+    font-size: 15px;
+  }
+
+  .dividido {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: center;
+    gap: 40px 64px;
+  }
+
+  .dividido-invertido > :global(.ilustracao) {
+    order: 2;
+  }
+
+  .dividido :global(.ilustracao),
+  .cinquenta :global(.ilustracao) {
+    width: 100%;
+    border-radius: var(--raio-grande);
+  }
+
+  .dividido h2 {
+    font-size: clamp(1.5rem, 1.25rem + 1vw, 2.1rem);
+  }
+
+  .dividido p {
+    color: var(--suave);
+    font-size: 1.1rem;
+  }
+
+  .subtitulo {
+    margin: 64px 0 24px;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .lances {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lances li {
+    padding: 24px;
+    border-top: 4px solid var(--vermelho);
+  }
+
+  .lances h4 {
+    margin-bottom: 8px;
+    color: var(--vermelho);
+    font-size: 1.1rem;
+  }
+
+  .lances p {
+    margin: 0;
+    color: var(--suave);
+    font-size: 15px;
+  }
+
+  .nota {
+    margin: 24px 0 0;
+    color: var(--suave);
+    text-align: center;
+  }
+
+  .cinquenta {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    align-items: center;
+    gap: 32px 56px;
+    margin-top: 56px;
+    padding: 32px;
+    border-radius: var(--raio-grande);
+    background: var(--grafite);
+    color: var(--branco);
+  }
+
+  .cinquenta-numero {
+    display: block;
+    color: var(--branco);
+    font-size: clamp(3rem, 2rem + 4vw, 5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .cinquenta p {
+    margin: 12px 0 0;
+    color: rgb(255 255 255 / 0.85);
+    font-size: 1.05rem;
+  }
+
+  .chamada {
+    padding-block: clamp(48px, 6vw, 72px);
+    background: linear-gradient(135deg, var(--vermelho) 0%, var(--vermelho-escuro) 100%);
+    color: var(--branco);
+  }
+
+  .chamada-h {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .chamada h2 {
+    margin-bottom: 0.3em;
+    color: var(--branco);
+  }
+
+  .chamada p {
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  .regulamento {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+    padding: 32px 36px;
+  }
+
+  .regulamento > div {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .regulamento h2 {
+    margin-bottom: 0.2em;
+    font-size: 1.6rem;
+  }
+
+  .regulamento p {
+    margin: 0;
+    color: var(--suave);
+  }
+
+  .regulamento-icone {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--vermelho-claro);
+    color: var(--vermelho);
+  }
+
+  .regulamento + .faq-rodape {
+    margin-top: 32px;
+  }
+
+  @media (max-width: 960px) {
+    .passos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dividido,
+    .cinquenta {
+      grid-template-columns: 1fr;
+    }
+
+    .dividido-invertido > :global(.ilustracao) {
+      order: 0;
+    }
+
+    .dividido :global(.ilustracao) {
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .passos {
+      grid-template-columns: 1fr;
+    }
+
+    .cinquenta,
+    .regulamento {
+      padding: 24px;
+    }
+  }
+</style>

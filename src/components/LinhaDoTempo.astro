@@ -1,0 +1,181 @@
+---
+// History slides from the WordPress "Nossa história" carousel. The texts are part of the images
+// (1280 × 640 on wide screens, 1080 × 1080 on phones), so the alt only names the year.
+import { getImage } from 'astro:assets';
+import Icon from './Icon.astro';
+import { imagem } from '../lib/imagens.mjs';
+
+const MARCOS = [
+  '1993', '1996', '1998', '2001', '2006', '2008', '2009', '2011', '2014', '2015-1', '2015-2', '2017', '2019', '2020', '2021', '2022', '2023', '2024',
+];
+
+const slides = await Promise.all(
+  MARCOS.map(async (marco) => ({
+    ano: marco.slice(0, 4),
+    grande: await getImage({ src: imagem(`linha-${marco}`), widths: [640, 1280], format: 'webp' }),
+    pequena: await getImage({ src: imagem(`linha-${marco}-mobile`), widths: [540, 1080], format: 'webp' }),
+  })),
+);
+---
+
+<div class="linha" aria-roledescription="carrossel" aria-label="Nossa história">
+  <div class="linha-palco">
+    <div class="linha-trilho">
+      {
+        slides.map((s, i) => (
+          <div class="linha-item" role="group" aria-roledescription="slide" aria-label={`${s.ano}`} aria-hidden={i > 0 ? 'true' : undefined}>
+            <picture>
+              <source media="(max-width: 700px)" srcset={s.pequena.srcSet.attribute} sizes="100vw" />
+              <img src={s.grande.src} srcset={s.grande.srcSet.attribute} sizes="(max-width: 1180px) 100vw, 1180px" alt={`HS Consórcios em ${s.ano}`} loading="lazy" decoding="async" />
+            </picture>
+          </div>
+        ))
+      }
+    </div>
+    <button class="linha-seta linha-anterior" type="button" aria-label="Marco anterior"><Icon nome="esquerda" tamanho={26} /></button>
+    <button class="linha-seta linha-proximo" type="button" aria-label="Próximo marco"><Icon nome="direita" tamanho={26} /></button>
+  </div>
+  <ol class="linha-anos">
+    {
+      slides.map((s, i) => (
+        <li>
+          <button type="button" aria-current={i === 0 ? 'true' : undefined}>
+            {s.ano}
+          </button>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  .linha-palco {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--raio-grande);
+    background: #111827;
+  }
+
+  .linha-trilho {
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .linha-item {
+    flex: 0 0 100%;
+  }
+
+  .linha-item img {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    object-fit: cover;
+  }
+
+  .linha-seta {
+    position: absolute;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.9);
+    color: var(--grafite);
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .linha-seta:hover {
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+
+  .linha-anterior {
+    left: 16px;
+  }
+
+  .linha-proximo {
+    right: 16px;
+  }
+
+  .linha-anos {
+    display: flex;
+    gap: 6px;
+    margin: 20px 0 0;
+    padding: 4px 0 8px;
+    overflow-x: auto;
+    list-style: none;
+    scrollbar-width: thin;
+  }
+
+  .linha-anos button {
+    padding: 8px 14px;
+    border: 1px solid var(--borda);
+    border-radius: 99px;
+    background: var(--branco);
+    color: var(--suave);
+    font: 500 14px/1 var(--fonte);
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+  }
+
+  .linha-anos button:hover {
+    border-color: var(--vermelho);
+    color: var(--vermelho);
+  }
+
+  .linha-anos button[aria-current='true'] {
+    border-color: var(--vermelho);
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+
+  @media (max-width: 700px) {
+    .linha-item img {
+      aspect-ratio: 1;
+    }
+
+    .linha-seta {
+      width: 38px;
+      height: 38px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .linha-trilho {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const linha = document.querySelector('.linha');
+  const trilho = linha.querySelector('.linha-trilho');
+  const itens = [...linha.querySelectorAll('.linha-item')];
+  const anos = [...linha.querySelectorAll('.linha-anos button')];
+  let atual = 0;
+
+  const ir = (i) => {
+    atual = (i + itens.length) % itens.length;
+    trilho.style.transform = `translateX(-${atual * 100}%)`;
+    itens.forEach((el, n) => el.toggleAttribute('aria-hidden', n !== atual));
+    anos.forEach((b, n) => b.setAttribute('aria-current', String(n === atual)));
+    anos[atual].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  };
+
+  linha.querySelector('.linha-anterior').addEventListener('click', () => ir(atual - 1));
+  linha.querySelector('.linha-proximo').addEventListener('click', () => ir(atual + 1));
+  anos.forEach((b, n) => b.addEventListener('click', () => ir(n)));
+
+  // Swipe on touch screens
+  let inicioX = null;
+  linha.addEventListener('touchstart', (e) => (inicioX = e.touches[0].clientX), { passive: true });
+  linha.addEventListener('touchend', (e) => {
+    if (inicioX === null) return;
+    const dx = e.changedTouches[0].clientX - inicioX;
+    if (Math.abs(dx) > 40) ir(atual + (dx < 0 ? 1 : -1));
+    inicioX = null;
+  });
+</script>

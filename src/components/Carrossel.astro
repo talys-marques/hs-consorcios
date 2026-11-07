@@ -1,0 +1,217 @@
+---
+// Home banners, with the simulator laid over the right side on wide screens (below the banners on small ones)
+import Banner from './Banner.astro';
+import Icon from './Icon.astro';
+import Simulador from './Simulador.astro';
+import { BANNERS } from '../config.mjs';
+import { url } from '../lib/site.mjs';
+---
+
+<section class="destaque">
+  <div class="carrossel" aria-roledescription="carrossel" aria-label="Destaques">
+    <div class="carrossel-trilho">
+      {
+        BANNERS.map((b, i) => (
+          <div class="carrossel-item" role="group" aria-roledescription="slide" aria-label={`${i + 1} de ${BANNERS.length}`} aria-hidden={i > 0 ? 'true' : undefined}>
+            {b.href ? (
+              <a href={url(b.href)} tabindex={i > 0 ? -1 : undefined} {...(/^https?:/.test(b.href) ? { target: '_blank', rel: 'noopener' } : {})}>
+                <Banner nome={b.imagem} alt={b.alt} prioridade={i === 0} />
+              </a>
+            ) : (
+              <Banner nome={b.imagem} alt={b.alt} prioridade={i === 0} />
+            )}
+          </div>
+        ))
+      }
+    </div>
+    <button class="carrossel-seta carrossel-anterior" type="button" aria-label="Banner anterior"><Icon nome="esquerda" tamanho={26} /></button>
+    <button class="carrossel-seta carrossel-proximo" type="button" aria-label="Próximo banner"><Icon nome="direita" tamanho={26} /></button>
+    <div class="carrossel-pontos">
+      {BANNERS.map((_, i) => <button type="button" aria-label={`Ir para o banner ${i + 1}`} aria-current={i === 0 ? 'true' : undefined} />)}
+    </div>
+  </div>
+
+  <div class="destaque-simulador" id="simulador">
+    <div class="container">
+      <Simulador />
+    </div>
+  </div>
+</section>
+
+<style>
+  .destaque {
+    position: relative;
+  }
+
+  .carrossel {
+    position: relative;
+    overflow: hidden;
+    background: var(--grafite);
+  }
+
+  .carrossel-trilho {
+    display: flex;
+    transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .carrossel-item {
+    flex: 0 0 100%;
+  }
+
+  .carrossel-seta {
+    position: absolute;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.85);
+    color: var(--grafite);
+    cursor: pointer;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.2s, background 0.2s, color 0.2s;
+  }
+
+  .carrossel:hover .carrossel-seta,
+  .carrossel-seta:focus-visible {
+    opacity: 1;
+  }
+
+  .carrossel-seta:hover {
+    background: var(--vermelho);
+    color: var(--branco);
+  }
+
+  .carrossel-anterior {
+    left: 20px;
+  }
+
+  /* Keeps clear of the simulator card */
+  .carrossel-proximo {
+    right: max(20px, calc((100vw - var(--largura)) / 2 + 400px));
+  }
+
+  .carrossel-pontos {
+    position: absolute;
+    left: 50%;
+    bottom: 14px;
+    display: flex;
+    gap: 8px;
+    transform: translateX(-50%);
+  }
+
+  .carrossel-pontos button {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: 2px solid var(--branco);
+    border-radius: 99px;
+    background: transparent;
+    cursor: pointer;
+    transition: width 0.3s, background 0.3s;
+  }
+
+  .carrossel-pontos button[aria-current='true'] {
+    width: 26px;
+    background: var(--branco);
+  }
+
+  /* The card is taller than the banner on most screens, so it starts near the top and hangs over the next section */
+  .destaque-simulador {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 28px;
+    pointer-events: none;
+  }
+
+  .destaque-simulador .container {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .destaque-simulador :global(.simulador) {
+    pointer-events: auto;
+  }
+
+  /* Below this width the banner is too short for the card, so the simulator moves under it */
+  @media (max-width: 1200px) {
+    .destaque-simulador {
+      position: static;
+      padding-block: 24px;
+      background: var(--cinza);
+    }
+
+    .destaque-simulador .container {
+      justify-content: center;
+    }
+
+    .destaque-simulador :global(.simulador) {
+      max-width: 480px;
+    }
+
+    .carrossel-proximo {
+      right: 20px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .carrossel-seta {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carrossel-trilho {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const carrossel = document.querySelector('.carrossel');
+  const trilho = carrossel.querySelector('.carrossel-trilho');
+  const itens = [...carrossel.querySelectorAll('.carrossel-item')];
+  const pontos = [...carrossel.querySelectorAll('.carrossel-pontos button')];
+  const automatico = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let atual = 0;
+  let timer;
+
+  const ir = (i) => {
+    atual = (i + itens.length) % itens.length;
+    trilho.style.transform = `translateX(-${atual * 100}%)`;
+    itens.forEach((el, n) => {
+      el.toggleAttribute('aria-hidden', n !== atual);
+      el.querySelector('a')?.setAttribute('tabindex', n === atual ? '0' : '-1');
+    });
+    pontos.forEach((p, n) => p.setAttribute('aria-current', String(n === atual)));
+  };
+
+  const reiniciar = () => {
+    clearInterval(timer);
+    if (automatico) timer = setInterval(() => ir(atual + 1), 6000);
+  };
+
+  carrossel.querySelector('.carrossel-anterior').addEventListener('click', () => (ir(atual - 1), reiniciar()));
+  carrossel.querySelector('.carrossel-proximo').addEventListener('click', () => (ir(atual + 1), reiniciar()));
+  pontos.forEach((p, n) => p.addEventListener('click', () => (ir(n), reiniciar())));
+
+  // Swipe on touch screens
+  let inicioX = null;
+  carrossel.addEventListener('touchstart', (e) => (inicioX = e.touches[0].clientX), { passive: true });
+  carrossel.addEventListener('touchend', (e) => {
+    if (inicioX === null) return;
+    const dx = e.changedTouches[0].clientX - inicioX;
+    if (Math.abs(dx) > 40) (ir(atual + (dx < 0 ? 1 : -1)), reiniciar());
+    inicioX = null;
+  });
+
+  carrossel.addEventListener('mouseenter', () => clearInterval(timer));
+  carrossel.addEventListener('mouseleave', reiniciar);
+  reiniciar();
+</script>
