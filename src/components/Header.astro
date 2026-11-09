@@ -16,7 +16,7 @@ const externo = (href) => /^https?:/.test(href);
   <div class="topo-barra">
     <div class="container topo-barra-h">
       <ul class="topo-atalhos">
-        {ATALHOS.map((a) => <li><a href={a.href}>{a.titulo}</a></li>)}
+        {ATALHOS.map((a) => <li><a href={url(a.href)}>{a.titulo}</a></li>)}
       </ul>
       <ul class="topo-redes">
         {
@@ -60,7 +60,7 @@ const externo = (href) => /^https?:/.test(href);
           }
         </ul>
         <ul class="menu-atalhos">
-          {ATALHOS.map((a) => <li><a href={a.href}>{a.titulo}</a></li>)}
+          {ATALHOS.map((a) => <li><a href={url(a.href)}>{a.titulo}</a></li>)}
         </ul>
       </nav>
     </div>

@@ -32,6 +32,19 @@ npm run icones     # só se o ícone ou o logo mudarem: refaz favicons e og.jpg
 
 Para publicar uma nova demonstração financeira ou relatório da Ouvidoria: coloque o PDF em `public/documentos/` e acrescente a linha correspondente em `DEMONSTRACOES` ou `OUVIDORIA` no topo de `src/pages/sobre-nos.astro`.
 
+## Publicação
+
+`.github/workflows/deploy-pages.yml` publica no GitHub Pages a cada push na `main`. Em **Settings > Pages**, a fonte precisa estar em **GitHub Actions**. Sem domínio próprio o site fica em `talys-marques.github.io/hs-consorcios/`; com um domínio configurado ali, ele passa a rodar na raiz, sem mudar nada no código.
+
+Para gerar localmente como no GitHub Pages:
+
+```bash
+SITE_URL=https://talys-marques.github.io BASE_PATH=/hs-consorcios npm run build
+BASE_PATH=/hs-consorcios npm run verificar
+```
+
+No Git Bash do Windows, coloque `MSYS_NO_PATHCONV=1` antes dos comandos; sem isso ele troca `/hs-consorcios` por `C:/Program Files/Git/hs-consorcios`.
+
 ## O que ainda falta para publicar
 
 - **Formulários sem backend:** o **Simulador**, o **Canal de Denúncias** e os **dois formulários da LGPD** funcionam na tela, mas não enviam nada; mostram um aviso de prévia. No WordPress eles eram enviados pelo `admin-ajax.php`. É preciso definir para onde vão (função serverless ou sistema da HS). O Canal de Denúncias precisa de sigilo e registro.

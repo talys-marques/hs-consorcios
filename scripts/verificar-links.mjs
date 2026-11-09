@@ -19,7 +19,11 @@ const pages = [];
 
 const resolves = (url) => {
   let path = decodeURIComponent(url.split('#')[0].split('?')[0]);
-  if (BASE && path.startsWith(BASE)) path = path.slice(BASE.length) || '/';
+  // With a base path every internal link must carry it, or it points outside the site on GitHub Pages
+  if (BASE) {
+    if (!path.startsWith(BASE)) return false;
+    path = path.slice(BASE.length) || '/';
+  }
   if (path === '/') return true;
   const file = join(DIST, path);
   return (existsSync(file) && statSync(file).isFile()) || existsSync(join(file, 'index.html'));
