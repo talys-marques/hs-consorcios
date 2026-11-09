@@ -36,6 +36,8 @@ Para publicar uma nova demonstração financeira ou relatório da Ouvidoria: col
 
 `.github/workflows/deploy-pages.yml` publica no GitHub Pages a cada push na `main`. Em **Settings > Pages**, a fonte precisa estar em **GitHub Actions**. Sem domínio próprio o site fica em `talys-marques.github.io/hs-consorcios/`; com um domínio configurado ali, ele passa a rodar na raiz, sem mudar nada no código.
 
+Enquanto o endereço for `*.github.io`, o site é tratado como prévia: todas as páginas levam `<meta name="robots" content="noindex, nofollow">` e o `robots.txt` bloqueia tudo, para o Google não indexar esta cópia junto com o site oficial. Quando o build for feito para o domínio final (`SITE_URL` de outro domínio), isso sai sozinho e o `robots.txt` passa a apontar o sitemap (`previa` em `src/lib/site.mjs`).
+
 Para gerar localmente como no GitHub Pages:
 
 ```bash

@@ -7,7 +7,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
 import { SITE, CONTATO, SIMULADOR } from '../config.mjs';
-import { url } from '../lib/site.mjs';
+import { url, previa } from '../lib/site.mjs';
 
 interface Props {
   titulo?: string;
@@ -27,6 +27,7 @@ const imagemSocial = new URL(url('/og.jpg'), Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{tituloCompleto}</title>
     <meta name="description" content={descricao} />
+    {previa && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={url('/favicon-32.png')} sizes="32x32" />
     <link rel="icon" href={url('/favicon-192.png')} sizes="192x192" />
